@@ -1,0 +1,58 @@
+0	Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season.
+0	WHAT EVENT 50 was an American football game to determine the champion of the National Football League ( NFL ) for the 2015 season .
+0	Super Bowl WHEN was an American football game to determine the champion of the National Football League ( NFL ) for the 2015 season .
+0	Super Bowl 50 was an WHAT NORP football game to determine the champion of the National Football League ( NFL ) for the 2015 season .
+0	Super Bowl 50 was an American football game to determine the champion of WHAT ORGANIZATION ( NFL ) for the 2015 season .
+0	Super Bowl 50 was an American football game to determine the champion of the National Football League ( WHAT ORGANIZATION ) for the 2015 season .
+0	Super Bowl 50 was an American football game to determine the champion of the National Football League ( NFL ) for WHEN .
+1	The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title.
+1	WHAT ORGANIZATION ( AFC ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title .
+1	The American Football Conference ( WHAT ORGANIZATION ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title .
+1	The American Football Conference ( AFC ) champion WHAT ORGANIZATION defeated the National Football Conference ( NFC ) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title .
+1	The American Football Conference ( AFC ) champion Denver Broncos defeated WHAT ORGANIZATION ( NFC ) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title .
+1	The American Football Conference ( AFC ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion WHO 24\u201310 to earn their third Super Bowl title .
+1	The American Football Conference ( AFC ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion Carolina Panthers WHAT CARDINAL to earn their third Super Bowl title .
+1	The American Football Conference ( AFC ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion Carolina Panthers 24\u201310 to earn their WHAT ORDINAL Super Bowl title .
+1	The American Football Conference ( AFC ) champion Denver Broncos defeated the National Football Conference ( NFC ) champion Carolina Panthers 24\u201310 to earn their third WHAT EVENT title .
+2	The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California.
+2	The game was played on WHEN , at Levi 's Stadium in the San Francisco Bay Area at Santa Clara , California .
+2	The game was played on February 7 , 2016 , at WHAT FAC in the San Francisco Bay Area at Santa Clara , California .
+2	The game was played on February 7 , 2016 , at Levi 's Stadium in WHERE at Santa Clara , California .
+2	The game was played on February 7 , 2016 , at Levi 's Stadium in the San Francisco Bay Area at WHAT GPE , California .
+2	The game was played on February 7 , 2016 , at Levi 's Stadium in the San Francisco Bay Area at Santa Clara , WHAT GPE .
+3	As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50.
+3	As this was WHAT EVENT , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals ( under which the game would have been known as " Super Bowl L " ) , so that the logo could prominently feature the Arabic numerals 50 .
+3	As this was the 50th Super Bowl , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each WHAT EVENT game with Roman numerals ( under which the game would have been known as " Super Bowl L " ) , so that the logo could prominently feature the Arabic numerals 50 .
+3	As this was the 50th Super Bowl , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each Super Bowl game with WHAT ORGANIZATION numerals ( under which the game would have been known as " Super Bowl L " ) , so that the logo could prominently feature the Arabic numerals 50 .
+3	As this was the 50th Super Bowl , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals ( under which the game would have been known as " WHAT EVENT " ) , so that the logo could prominently feature the Arabic numerals 50 .
+3	As this was the 50th Super Bowl , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals ( under which the game would have been known as " Super Bowl L " ) , so that the logo could prominently feature the WHAT NORP numerals 50 .
+3	As this was the 50th Super Bowl , the league emphasized the " golden anniversary " with various gold - themed initiatives , as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals ( under which the game would have been known as " Super Bowl L " ) , so that the logo could prominently feature the Arabic numerals WHEN .
+4	The Panthers finished the regular season with a 15\u20131 record, and quarterback Cam Newton was named the NFL Most Valuable Player (MVP).
+4	The WHAT ORGANIZATION finished the regular season with a 15\u20131 record , and quarterback Cam Newton was named the NFL Most Valuable Player ( MVP ) .
+4	The Panthers finished WHEN with a 15\u20131 record , and quarterback Cam Newton was named the NFL Most Valuable Player ( MVP ) .
+4	The Panthers finished the regular season with a 15\u20131 record , and quarterback WHO was named the NFL Most Valuable Player ( MVP ) .
+4	The Panthers finished the regular season with a 15\u20131 record , and quarterback Cam Newton was named the WHAT ORGANIZATION Most Valuable Player ( MVP ) .
+4	The Panthers finished the regular season with a 15\u20131 record , and quarterback Cam Newton was named the NFL WHAT WORK_OF_ART ( MVP ) .
+4	The Panthers finished the regular season with a 15\u20131 record , and quarterback Cam Newton was named the NFL Most Valuable Player ( WHAT ORGANIZATION ) .
+5	They defeated the Arizona Cardinals 49\u201315 in the NFC Championship Game and advanced to their second Super Bowl appearance since the franchise was founded in 1995.
+5	They defeated WHAT ORGANIZATION 49\u201315 in the NFC Championship Game and advanced to their second Super Bowl appearance since the franchise was founded in 1995 .
+5	They defeated the Arizona Cardinals 49\u201315 in WHAT PRODUCT and advanced to their second Super Bowl appearance since the franchise was founded in 1995 .
+5	They defeated the Arizona Cardinals 49\u201315 in the NFC Championship Game and advanced to their WHAT ORDINAL Super Bowl appearance since the franchise was founded in 1995 .
+5	They defeated the Arizona Cardinals 49\u201315 in the NFC Championship Game and advanced to their second WHAT EVENT appearance since the franchise was founded in 1995 .
+5	They defeated the Arizona Cardinals 49\u201315 in the NFC Championship Game and advanced to their second Super Bowl appearance since the franchise was founded in WHEN .
+6	The Broncos finished the regular season with a 12\u20134 record, and denied the New England Patriots a chance to defend their title from Super Bowl XLIX by defeating them 20\u201318 in the AFC Championship Game.
+6	The WHAT ORGANIZATION finished the regular season with a 12\u20134 record , and denied the New England Patriots a chance to defend their title from Super Bowl XLIX by defeating them 20\u201318 in the AFC Championship Game .
+6	The Broncos finished WHEN with a 12\u20134 record , and denied the New England Patriots a chance to defend their title from Super Bowl XLIX by defeating them 20\u201318 in the AFC Championship Game .
+6	The Broncos finished the regular season with a 12\u20134 record , and denied WHAT ORGANIZATION a chance to defend their title from Super Bowl XLIX by defeating them 20\u201318 in the AFC Championship Game .
+6	The Broncos finished the regular season with a 12\u20134 record , and denied the New England Patriots a chance to defend their title from WHAT PRODUCT by defeating them 20\u201318 in the AFC Championship Game .
+6	The Broncos finished the regular season with a 12\u20134 record , and denied the New England Patriots a chance to defend their title from Super Bowl XLIX by defeating them WHAT CARDINAL in the AFC Championship Game .
+6	The Broncos finished the regular season with a 12\u20134 record , and denied the New England Patriots a chance to defend their title from Super Bowl XLIX by defeating them 20\u201318 in WHAT PRODUCT .
+7	They joined the Patriots, Dallas Cowboys, and Pittsburgh Steelers as one of four teams that have made eight appearances in the Super Bowl.
+7	They joined the WHAT ORGANIZATION , Dallas Cowboys , and Pittsburgh Steelers as one of four teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , WHAT GPE Cowboys , and Pittsburgh Steelers as one of four teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , Dallas WHAT ORGANIZATION , and Pittsburgh Steelers as one of four teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , Dallas Cowboys , and WHO as one of four teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , Dallas Cowboys , and Pittsburgh Steelers as WHAT CARDINAL of four teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , Dallas Cowboys , and Pittsburgh Steelers as one of WHAT CARDINAL teams that have made eight appearances in the Super Bowl .
+7	They joined the Patriots , Dallas Cowboys , and Pittsburgh Steelers as one of four teams that have made WHAT CARDINAL appearances in the Super Bowl .
+7	They joined the Patriots , Dallas Cowboys , and Pittsburgh Steelers as one of four teams that have made eight appearances in WHAT EVENT .

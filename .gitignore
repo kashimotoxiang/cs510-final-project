@@ -1,0 +1,9 @@
+*.xml
+*.png
+*.tar
+*.gz
+*.pyc
+*.pt
+*.jar
+*.yml
+*.iml
