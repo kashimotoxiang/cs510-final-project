@@ -1,6 +1,9 @@
 {
-    "python.pythonPath": "~/anaconda3/envs/cs510/bin/python",
+    "python.pythonPath": "/Users/yuxiangli/anaconda3/envs/cs510/bin/python",
+
     "code-runner.executorMap": {
-        "python": "~/anaconda3/envs/cs510/bin/python",
+        "python": "/Users/yuxiangli/anaconda3/envs/cs510/bin/python",
     },
+
+
 }
