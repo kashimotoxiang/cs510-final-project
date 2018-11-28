@@ -3,7 +3,6 @@ import numpy as np
 from . import modeling
 from . import tokenization
 import tensorflow as tf
-import lyx
 layer_indexes = [-1]
 
 
@@ -11,7 +10,7 @@ flags = tf.flags
 
 FLAGS = flags.FLAGS
 
-BERTPAT = "/root/opt/uncased_L-12_H-768_A-12/"
+BERTPAT = "/Users/yuxiangli/lib/bert/uncased_L-12_H-768_A-12/"
 flags.DEFINE_string(
     "bert_config_file", BERTPAT+"bert_config.json",
     "The config json file corresponding to the pre-trained BERT model. "
@@ -97,7 +96,7 @@ class VecGenerator():
             input_fn, yield_single_examples=True))[0]
 
         layer_output = result["layer_output_0"]
-        layer_outputT = layer_output[1:len(features[0].tokens), :]
-        sentence_rep = np.sum(layer_outputT, axis=0)
-
+        # layer_outputT = layer_output[1:len(features[0].tokens)-1, :]
+        # sentence_rep = np.sum(layer_outputT, axis=0)
+        sentence_rep=layer_output[0]
         return sentence_rep

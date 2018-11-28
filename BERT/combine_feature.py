@@ -16,9 +16,9 @@ def main():
         print('\n\nid:')
         print(id)
         tmp = lyx.io.load_pkl(file.split(".")[0])
-        res += [x.sentVec for x in tmp]
+        res += [x.tokenVec[0] for x in tmp]
     lyx.io.save_pkl(res, "sentVec")
 
 
 if __name__ == "__main__":
-    pass
+    main()

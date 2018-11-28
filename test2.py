@@ -1,15 +1,14 @@
-# %%
 
 from BERT import sent2vec
 import numpy as np
 
-generator = sent2vec.VecGenerator()
-# %%
 sent = "That goes for your hands too, wash your hands frequently and always use chopsticks."
-vecs = generator(sent)
 
-vecs = np.array(vecs, np.float32)
-np.resize(vecs, (1, 768))
+from service.client import BertClient
+bc = BertClient(ip='192.168.50.27')  # ip address of the GPU machine
+vecs = bc.encode([sent])
+
+
 import vector_search  # This import may take several minutes
 
 # vecs = np.random.random((1, 768)).astype('float32')  # 这里随机生成一个向量来用
