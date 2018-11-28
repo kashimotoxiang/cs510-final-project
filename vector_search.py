@@ -1,26 +1,22 @@
 import faiss
 import joblib
 import numpy as np
-from BERT.dataStructure import
+
 verbose = False  # set it to True when debugging
 
-FILE_VEC = 'data/sentVec.pkl'
+FILE_VEC = 'data/res.pkl'
 FILE_SUBSENTENCE = 'data/extend_mask_input.txt'
 FILE_ALL_SENTENCE = 'data/All Sentences.txt'
 
-vec = None
-substcs = None
-sentences = None
-index = None
-
 
 def load_data():
+    global vec
+    global substcs
+    global sentences
     print('Loading sentences and vectors. This may take a few minutes... ')
-
     with open(FILE_VEC, 'rb') as f:
         vec_ = joblib.load(f)
-    vec = np.array(vec_)[:, 0, :]
-
+    vec = np.array(vec_)
     substcs = []
     with open(FILE_SUBSENTENCE, 'r') as f:
         substcs_ = f.readlines()
@@ -33,9 +29,10 @@ def load_data():
 
 
 def index_data():
+    global index
     print('Indexing data... ')
     d = len(vec[0])
-    index = faiss.IndexFlatL2(d)
+    index = faiss.IndexFlatIP(d)
     # print(index.is_trained)
     index.add(np.ascontiguousarray(vec))
     print('Indexing data done. ')
@@ -58,7 +55,8 @@ def search(queries, num_results):
     print('Searching %d similar items for %d queries...'
           % (num_results, len(queries)))
     D, I = index.search(np.ascontiguousarray(queries), num_results)
-    result = [0 for _ in range(len(queries))]
+    result_sentences = [0 for _ in range(len(queries))]
+    result_similarities = [0 for _ in range(len(queries))]
     for query in range(len(queries)):
         if verbose:
             print('No. %d query: ' % query)
@@ -70,9 +68,13 @@ def search(queries, num_results):
             st_similarity_map[sentence_idx] = max(D[query][i], s)
             if verbose:
                 print('  ' + item)
-        sorted_stc = sorted(st_similarity_map.items(), key=lambda kv: kv[1])
-        result[query] = [sorted_stc[i][0] for i in range(len(sorted_stc))]
-    return result
+        sorted_stc = sorted(st_similarity_map.items(),
+                            key=lambda kv: kv[1], reverse=True)
+        result_sentences[query] = [sorted_stc[i][0]
+                                   for i in range(len(sorted_stc))]
+        result_similarities[query] = [sorted_stc[i][1]
+                                      for i in range(len(sorted_stc))]
+    return result_sentences, result_similarities
 
 
 load_data()
