@@ -22,31 +22,32 @@ import pickle
 flags = tf.flags
 
 FLAGS = flags.FLAGS
+BERTPAT = "/Users/yuxiangli/lib/bert/uncased_L-12_H-768_A-12/"
 
 flags.DEFINE_string(
-    "data_dir", None,
+    "data_dir", "NERdata",
     "The input datadir.",
 )
 
 flags.DEFINE_string(
-    "bert_config_file", None,
+    "bert_config_file", BERTPAT+"bert_config.json",
     "The config json file corresponding to the pre-trained BERT model."
 )
 
 flags.DEFINE_string(
-    "task_name", None, "The name of the task to train."
+    "task_name", "NER", "The name of the task to train."
 )
 
 flags.DEFINE_string(
-    "output_dir", None,
+    "output_dir", "./output/result_dir/",
     "The output directory where the model checkpoints will be written."
 )
 
 ## Other parameters
+
 flags.DEFINE_string(
-    "init_checkpoint", None,
-    "Initial checkpoint (usually from a pre-trained BERT model)."
-)
+    "init_checkpoint", BERTPAT+"bert_model.ckpt",
+    "Initial checkpoint (usually from a pre-trained BERT model).")
 
 flags.DEFINE_bool(
     "do_lower_case", True,
@@ -59,14 +60,14 @@ flags.DEFINE_integer(
 )
 
 flags.DEFINE_bool(
-    "do_train", False,
+    "do_train", True,
     "Whether to run training."
 )
 flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
-flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
+flags.DEFINE_bool("do_eval", True, "Whether to run eval on the dev set.")
 
-flags.DEFINE_bool("do_predict", False,"Whether to run the model in inference mode on the test set.")
+flags.DEFINE_bool("do_predict", True,"Whether to run the model in inference mode on the test set.")
 
 flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
 
@@ -91,8 +92,9 @@ flags.DEFINE_integer("save_checkpoints_steps", 1000,
 flags.DEFINE_integer("iterations_per_loop", 1000,
                      "How many steps to make in each estimator call.")
 
-flags.DEFINE_string("vocab_file", None,
+flags.DEFINE_string("vocab_file", BERTPAT+"vocab.txt",
                     "The vocabulary file that the BERT model was trained on.")
+
 tf.flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 flags.DEFINE_integer(
     "num_tpu_cores", 8,
@@ -382,7 +384,7 @@ def create_model(bert_config, is_training, input_ids, input_mask,
         predict = tf.argmax(probabilities,axis=-1)
         return (loss, per_example_loss, logits,predict)
         ##########################################################################
-        
+
 def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings):
@@ -430,7 +432,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn)
         elif mode == tf.estimator.ModeKeys.EVAL:
-            
+
             def metric_fn(per_example_loss, label_ids, logits):
             # def metric_fn(label_ids, logits):
                 predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
@@ -581,7 +583,7 @@ def main(_):
         filed_based_convert_examples_to_features(predict_examples, label_list,
                                                 FLAGS.max_seq_length, tokenizer,
                                                 predict_file,mode="test")
-                            
+
         tf.logging.info("***** Running prediction*****")
         tf.logging.info("  Num examples = %d", len(predict_examples))
         tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
@@ -604,11 +606,6 @@ def main(_):
                 writer.write(output_line)
 
 if __name__ == "__main__":
-    flags.mark_flag_as_required("data_dir")
-    flags.mark_flag_as_required("task_name")
-    flags.mark_flag_as_required("vocab_file")
-    flags.mark_flag_as_required("bert_config_file")
-    flags.mark_flag_as_required("output_dir")
     tf.app.run()
 
 
