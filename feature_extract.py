@@ -3,16 +3,66 @@ import lyx
 import collections
 from spacy.attrs import HEAD
 import numpy as np
-# from sklearn.preprocessing import normalize
-# from benepar.spacy_plugin import BeneparComponent
+from sklearn.preprocessing import normalize
+from benepar.spacy_plugin import BeneparComponent
 POS = ("Tag", "-LRB-", "-RRB-", ",", ":", ".", "''", "\"\"", "#", "``", "$", "ADD", "AFX", "BES", "CC", "CD", "DT", "EX", "FW", "GW", "HVS", "HYPH", "IN", "JJ", "JJR", "JJS", "LS", "MD",
        "NFP", "NIL", "NN", "NNP", "NNPS", "NNS", "PDT", "POS", "PRP", "PRP$", "RB", "RBR", "RBS", "RP", "_SP", "SYM", "TO", "UH", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "WDT", "WP", "WP$", "WRB", "XX")
 
 ENTITY = ("X", 'PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART',
           'LAW', 'LANGUAGE', 'DATE', 'TIME', 'PERCENT', 'MONEY', 'QUANTITY', 'ORDINAL', 'CARDINAL')
 
-DEP = ("acl", "acomp", "advcl", "advmod", "agent", "amod", "appos", "attr", "aux", "auxpass", "case", "cc", "ccomp", "compound", "conj", "cop", "csubj", "csubjpass", "dative", "dep", "det", "dobj", "expl", "intj",
-       "mark", "meta", "neg", "nn", "nounmod", "npmod", "nsubj", "nsubjpass", "nummod", "oprd", "obj", "obl", "parataxis", "pcomp", "pobj", "poss", "preconj", "prep", "prt", "punct", "quantmod", "relcl", "root", "xcomp")
+DEP = ("acl",
+       "acomp",
+       "advcl",
+       "advmod",
+       "agent",
+       "amod",
+       "appos",
+       "attr",
+       "aux",
+       "auxpass",
+       "case",
+       "cc",
+       "ccomp",
+       "compound",
+       "csubj",
+       "csubjpass",
+       "dative",
+       "dep",
+       "det",
+       "dobj",
+       "expl",
+       "intj",
+       "iobj",
+       "mark",
+       "meta",
+       "neg",
+       "nmod",
+       "npadvmod",
+       "nsubj",
+       "nsubjpass",
+       "nummod",
+       "oprd",
+       "parataxis",
+       "pcomp",
+       "pobj",
+       "poss",
+       "preconj",
+       "predet",
+       "prep",
+       "prt",
+       "punct",
+       "quantmod",
+       "relcl",
+       "xcomp",
+       "conj",
+       "cop",
+       "nn",
+       "nounmod",
+       "npmod",
+       "obj",
+       "obl",
+       "ROOT")
 
 pos_mapper = {x: i for i, x in enumerate(POS)}
 entity_mapper = {x: i for i, x in enumerate(ENTITY)}
@@ -20,13 +70,14 @@ dep_mapper = {x: i for i, x in enumerate(DEP)}
 
 en_freq = lyx.io.load_pkl("en_freq")
 en_freq = collections.defaultdict(lambda: 0, en_freq)
-# nlp = spacy.load('en_core_web_sm')
-# nlp = spacy.load('en')
-# nlp.add_pipe(BeneparComponent("benepar_en"))
+nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en')
+nlp.add_pipe(BeneparComponent("benepar_en"))
 
 
 class Example():
-    def __init__(self, feature, label):
+    def __init__(self, text, feature, label):
+        self.text = feature
         self.feature = feature
         self.label = label
 
@@ -101,7 +152,7 @@ def feature_extract(sent):
 
     for ent in doc.ents:
         for i in range(ent.start, ent.end):
-            features[i].ner = ent.label
+            features[i].ner = ent.label_
 
     noun_chunks = list(doc.noun_chunks)
     for chunk in noun_chunks:
@@ -134,22 +185,29 @@ def feature2vec(sentFeature):
 
 def main():
 
-    labels = lyx.io.read_all_lines("data/train-labels.txt")
+    labels = lyx.io.read_all_lines("data/labels-remove-zeros.txt")[:100]
     labels = [np.fromstring(line, dtype=int, sep=' ')
-              for line in labels if len(line) > 3]
+              for line in labels]
 
-    sentences = lyx.io.read_all_lines("train-sentences.txt")
+    sentences = lyx.io.read_all_lines("data/sentences-remove-zeros.txt")[:100]
 
-    sentences = [
-        "Given an array A of strings, find any smallest string that contains each string in A as a substring."]
-    sentFeature = list(map(feature_extract, sentences))
+    # # sentences = [
+    # #     "Given an array A of strings, find any smallest string that contains each string in A as a substring."]
+    # # sentFeature = list(map(feature_extract, sentences))
+    sentFeature = []
+    for i, item in enumerate(sentences):
+        tmp = feature_extract(item)
+        sentFeature.append(tmp)
+        print(i)
+
     lyx.io.save_pkl(sentFeature, "sentFeature")
-
+    # sentFeature = lyx.io.load_pkl("sentFeature")
     sentFeatureVec = feature2vec(sentFeature)
     sentFeatureVec = np.array(sentFeatureVec)
     lyx.io.save_pkl(sentFeatureVec, "sentFeatureVec")
 
-    exmaples = [Example(x, y) for x, y in zip(sentFeatureVec, labels)]
+    exmaples = [Example(x, y, z)
+                for x, y, z in zip(sentences, sentFeatureVec, labels)]
     lyx.io.save_pkl(exmaples, "exmaples")
 
 
