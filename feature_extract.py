@@ -2,16 +2,17 @@ import spacy
 import lyx
 import collections
 from spacy.attrs import HEAD
-import numpy
-from sklearn.preprocessing import normalize
-from benepar.spacy_plugin import BeneparComponent
+import numpy as np
+# from sklearn.preprocessing import normalize
+# from benepar.spacy_plugin import BeneparComponent
 POS = ("Tag", "-LRB-", "-RRB-", ",", ":", ".", "''", "\"\"", "#", "``", "$", "ADD", "AFX", "BES", "CC", "CD", "DT", "EX", "FW", "GW", "HVS", "HYPH", "IN", "JJ", "JJR", "JJS", "LS", "MD",
        "NFP", "NIL", "NN", "NNP", "NNPS", "NNS", "PDT", "POS", "PRP", "PRP$", "RB", "RBR", "RBS", "RP", "_SP", "SYM", "TO", "UH", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "WDT", "WP", "WP$", "WRB", "XX")
 
 ENTITY = ("X", 'PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART',
           'LAW', 'LANGUAGE', 'DATE', 'TIME', 'PERCENT', 'MONEY', 'QUANTITY', 'ORDINAL', 'CARDINAL')
 
-DEP = ("acl","acomp","advcl","advmod","agent","amod","appos","attr","aux","auxpass","case","cc","ccomp","compound","conj","cop","csubj","csubjpass","dative","dep","det","dobj","expl","intj","mark","meta","neg","nn","nounmod","npmod","nsubj","nsubjpass","nummod","oprd","obj","obl","parataxis","pcomp","pobj","poss","preconj","prep","prt","punct","quantmod","relcl","root","xcomp")
+DEP = ("acl", "acomp", "advcl", "advmod", "agent", "amod", "appos", "attr", "aux", "auxpass", "case", "cc", "ccomp", "compound", "conj", "cop", "csubj", "csubjpass", "dative", "dep", "det", "dobj", "expl", "intj",
+       "mark", "meta", "neg", "nn", "nounmod", "npmod", "nsubj", "nsubjpass", "nummod", "oprd", "obj", "obl", "parataxis", "pcomp", "pobj", "poss", "preconj", "prep", "prt", "punct", "quantmod", "relcl", "root", "xcomp")
 
 pos_mapper = {x: i for i, x in enumerate(POS)}
 entity_mapper = {x: i for i, x in enumerate(ENTITY)}
@@ -20,8 +21,14 @@ dep_mapper = {x: i for i, x in enumerate(DEP)}
 en_freq = lyx.io.load_pkl("en_freq")
 en_freq = collections.defaultdict(lambda: 0, en_freq)
 # nlp = spacy.load('en_core_web_sm')
-nlp = spacy.load('en')
-nlp.add_pipe(BeneparComponent("benepar_en"))
+# nlp = spacy.load('en')
+# nlp.add_pipe(BeneparComponent("benepar_en"))
+
+
+class Example():
+    def __init__(self, feature, label):
+        self.feature = feature
+        self.label = label
 
 
 class Features():
@@ -45,6 +52,7 @@ class Features():
         self.offset = None
         self.dep_offset = None
         self.ischunk = None
+
 
 def find_root(token, depth):
     if token.dep_ == 'ROOT':
@@ -117,7 +125,7 @@ def feature2vec(sentFeature):
             boolFeature = [word.is_oov, word.is_stop, word.is_currency, word.is_punct, word.is_upper,
                            word.is_lower, word.like_num, word.is_title, word.is_digit, word.is_alpha, word.ischunk]*1
             numFeaure = [word.length, word.dep_offset,
-                         word.offset, word.vector_norm,word.rank]
+                         word.offset, word.vector_norm, word.rank]
             vec = boolFeature + posVec + entityVec + depVec + numFeaure
             sentVec.append(vec)
         res.append(sentVec)
@@ -126,16 +134,23 @@ def feature2vec(sentFeature):
 
 def main():
 
-    sentences = lyx.io.read_all_lines("input.txt")
+    labels = lyx.io.read_all_lines("data/train-labels.txt")
+    labels = [np.fromstring(line, dtype=int, sep=' ')
+              for line in labels if len(line) > 3]
+
+    sentences = lyx.io.read_all_lines("train-sentences.txt")
+
     sentences = [
         "Given an array A of strings, find any smallest string that contains each string in A as a substring."]
     sentFeature = list(map(feature_extract, sentences))
     lyx.io.save_pkl(sentFeature, "sentFeature")
-    # sentFeature = lyx.io.load_pkl("sentFeature")
 
     sentFeatureVec = feature2vec(sentFeature)
-    sentFeatureVec = numpy.array(sentFeatureVec)
+    sentFeatureVec = np.array(sentFeatureVec)
     lyx.io.save_pkl(sentFeatureVec, "sentFeatureVec")
+
+    exmaples = [Example(x, y) for x, y in zip(sentFeatureVec, labels)]
+    lyx.io.save_pkl(exmaples, "exmaples")
 
 
 if __name__ == "__main__":
