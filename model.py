@@ -14,6 +14,8 @@ torch.manual_seed(1)
 START_TAG = "<START>"
 STOP_TAG = "<STOP>"
 
+CUDA = torch.cuda.is_available()
+
 
 def argmax(vec):
     # return the argmax as a python int
@@ -50,7 +52,7 @@ class BiLSTM_CRF(nn.Module):
         # Matrix of transition parameters.  Entry i,j is the score of
         # transitioning *to* i *from* j.
         self.transitions = nn.Parameter(
-            torch.randn(self.tagset_size, self.tagset_size))
+            randn(self.tagset_size, self.tagset_size))
 
         # These two statements enforce the constraint that we never transfer
         # to the start tag and we never transfer from the stop tag
@@ -58,14 +60,18 @@ class BiLSTM_CRF(nn.Module):
         self.transitions.data[:, tag_to_ix[STOP_TAG]] = -10000
 
         self.hidden = self.init_hidden()
+        self = self.cuda()
 
     def init_hidden(self):
-        return (torch.randn(2*self.num_layers, 1, self.hidden_dim // 2),
-                torch.randn(2*self.num_layers, 1, self.hidden_dim // 2))
+        return (randn(2*self.num_layers, 1, self.hidden_dim // 2),
+                randn(2*self.num_layers, 1, self.hidden_dim // 2))
 
     def _forward_alg(self, feats):
         # Do the forward algorithm to compute the partition function
-        init_alphas = torch.full((1, self.tagset_size), -10000.)
+        # init_alphas = torch.full((1, self.tagset_size), -10000.)
+        init_alphas = Tensor(
+            1, self.tagset_size).fill_(-10000.)  # [B, C]
+
         # START_TAG has all of the score.
         init_alphas[0][self.tag_to_ix[START_TAG]] = 0.
 
@@ -104,9 +110,11 @@ class BiLSTM_CRF(nn.Module):
 
     def _score_sentence(self, feats, tags):
         # Gives the score of a provided tag sequence
-        score = torch.zeros(1)
+        # score = torch.zeros(1)
+        score = zeros(1)
+
         tags = torch.cat(
-            [torch.tensor([self.tag_to_ix[START_TAG]], dtype=torch.long), tags])
+            [torch.tensor([self.tag_to_ix[START_TAG]], dtype=torch.long).cuda(), tags])
         for i, feat in enumerate(feats):
             score = score + \
                 self.transitions[tags[i + 1], tags[i]] + feat[tags[i + 1]]
@@ -116,8 +124,10 @@ class BiLSTM_CRF(nn.Module):
     def _viterbi_decode(self, feats):
         backpointers = []
 
-        init_vvars = torch.full((1, self.tagset_size), -10000.)
-        init_vvars[0][self.tag_to_ix[START_TAG]] = 0
+        init_vvars = Tensor(1, self.tagset_size).fill_(-10000.)
+
+        # init_vvars = torch.full((1, self.tagset_size), -10000.)
+        init_vvars[0, self.tag_to_ix[START_TAG]] = 0
 
         # forward_var at step i holds the viterbi variables for step i-1
         forward_var = init_vvars
@@ -169,3 +179,28 @@ class BiLSTM_CRF(nn.Module):
         # Find the best path, given the features.
         score, tag_seq = self._viterbi_decode(lstm_feats)
         return score, tag_seq
+
+
+def Tensor(*args):
+    x = torch.Tensor(*args)
+    return x.cuda() if CUDA else x
+
+
+def LongTensor(*args):
+    x = torch.LongTensor(*args)
+    return x.cuda() if CUDA else x
+
+
+def randn(*args):
+    x = torch.randn(*args)
+    return x.cuda() if CUDA else x
+
+
+def zeros(*args):
+    x = torch.zeros(*args)
+    return x.cuda() if CUDA else x
+
+
+def log_sum_exp(x):
+    m = torch.max(x, -1)[0]
+    return m + torch.log(torch.sum(torch.exp(x - m.unsqueeze(-1)), -1))
