@@ -12,15 +12,26 @@ import model as md
 torch.manual_seed(1)
 
 EPOCH = 300
-HIDDEN_DIM = 80
+HIDDEN_DIM = 1000
 NUM_LAYERS = 6
+
+
 START_TAG = "<START>"
 STOP_TAG = "<STOP>"
+
 tag_to_ix = {0: 0, 1: 1, START_TAG: 2, STOP_TAG: 3}
 
 
+class Example():
+    def __init__(self, text, feature, label):
+        self.text = feature
+        self.feature = feature
+        self.label = label
+
+
 def main():
-    examples = pickle.load(open("data/train_1.pkl", "rb"))
+    examples = lyx.io.load_pkl("data/train")
+    examples = np.array(examples)
 
     EMBEDDING_DIM = np.array(examples[0].feature).shape[1]
 
@@ -35,13 +46,8 @@ def main():
 
     # Run training
 
-    path = "data/train_1.pkl"
-
-    examples = pickle.load(open(path, "rb"))
-    examples = np.array(examples)
-
-    optimizer = optim.SGD(model.parameters(), lr=1e-3,
-                          weight_decay=1e-4, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.01,
+                          weight_decay=0, momentum=0.9)
 
     ss = ShuffleSplit(n_splits=EPOCH, test_size=0.025, random_state=0)
 

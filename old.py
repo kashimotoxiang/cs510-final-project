@@ -1,18 +1,14 @@
-# coding: utf-8
-import lyx
-import numpy as np
+# -*- coding: utf-8 -*-
 
 import torch
 import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
-import pickle
-from sklearn.model_selection import ShuffleSplit
 
 torch.manual_seed(1)
 
-START_TAG = "<START>"
-STOP_TAG = "<STOP>"
+#####################################################################
+# Helper functions to make the code more readable.
 
 
 def argmax(vec):
@@ -20,29 +16,36 @@ def argmax(vec):
     _, idx = torch.max(vec, 1)
     return idx.item()
 
+
+def prepare_sequence(seq, to_ix):
+    idxs = [to_ix[w] for w in seq]
+    return torch.tensor(idxs, dtype=torch.long)
+
+
 # Compute log sum exp in a numerically stable way for the forward algorithm
-
-
 def log_sum_exp(vec):
     max_score = vec[0, argmax(vec)]
     max_score_broadcast = max_score.view(1, -1).expand(1, vec.size()[1])
-    return max_score + torch.log(torch.sum(torch.exp(vec - max_score_broadcast)))
+    return max_score + \
+        torch.log(torch.sum(torch.exp(vec - max_score_broadcast)))
 
-
+#####################################################################
 # Create model
+
+
 class BiLSTM_CRF(nn.Module):
 
-    def __init__(self, tag_to_ix, embedding_dim, hidden_dim, num_layers):
+    def __init__(self, vocab_size, tag_to_ix, embedding_dim, hidden_dim):
         super(BiLSTM_CRF, self).__init__()
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
-        self.num_layers = num_layers
+        self.vocab_size = vocab_size
         self.tag_to_ix = tag_to_ix
         self.tagset_size = len(tag_to_ix)
 
+        self.word_embeds = nn.Embedding(vocab_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim // 2,
-                            dropout=0.5,
-                            num_layers=num_layers, bidirectional=True)
+                            num_layers=1, bidirectional=True)
 
         # Maps the output of the LSTM into tag space.
         self.hidden2tag = nn.Linear(hidden_dim, self.tagset_size)
@@ -60,8 +63,8 @@ class BiLSTM_CRF(nn.Module):
         self.hidden = self.init_hidden()
 
     def init_hidden(self):
-        return (torch.randn(2*self.num_layers, 1, self.hidden_dim // 2),
-                torch.randn(2*self.num_layers, 1, self.hidden_dim // 2))
+        return (torch.randn(2, 1, self.hidden_dim // 2),
+                torch.randn(2, 1, self.hidden_dim // 2))
 
     def _forward_alg(self, feats):
         # Do the forward algorithm to compute the partition function
@@ -94,11 +97,11 @@ class BiLSTM_CRF(nn.Module):
         alpha = log_sum_exp(terminal_var)
         return alpha
 
-    def _get_lstm_features(self, feature):
+    def _get_lstm_features(self, sentence):
         self.hidden = self.init_hidden()
-        embeds = feature.view(len(feature), 1, self.embedding_dim)
+        embeds = self.word_embeds(sentence).view(len(sentence), 1, -1)
         lstm_out, self.hidden = self.lstm(embeds, self.hidden)
-        lstm_out = lstm_out.view(len(embeds), self.hidden_dim)
+        lstm_out = lstm_out.view(len(sentence), self.hidden_dim)
         lstm_feats = self.hidden2tag(lstm_out)
         return lstm_feats
 
@@ -116,6 +119,7 @@ class BiLSTM_CRF(nn.Module):
     def _viterbi_decode(self, feats):
         backpointers = []
 
+        # Initialize the viterbi variables in log space
         init_vvars = torch.full((1, self.tagset_size), -10000.)
         init_vvars[0][self.tag_to_ix[START_TAG]] = 0
 
@@ -156,16 +160,79 @@ class BiLSTM_CRF(nn.Module):
         best_path.reverse()
         return path_score, best_path
 
-    def neg_log_likelihood(self, feature, tags):
-        feats = self._get_lstm_features(feature)
+    def neg_log_likelihood(self, sentence, tags):
+        feats = self._get_lstm_features(sentence)
         forward_score = self._forward_alg(feats)
         gold_score = self._score_sentence(feats, tags)
         return forward_score - gold_score
 
-    def forward(self, feature):  # dont confuse this with _forward_alg above.
+    def forward(self, sentence):  # dont confuse this with _forward_alg above.
         # Get the emission scores from the BiLSTM
-        lstm_feats = self._get_lstm_features(feature)
+        lstm_feats = self._get_lstm_features(sentence)
 
         # Find the best path, given the features.
         score, tag_seq = self._viterbi_decode(lstm_feats)
         return score, tag_seq
+
+#####################################################################
+# Run training
+
+
+START_TAG = "<START>"
+STOP_TAG = "<STOP>"
+EMBEDDING_DIM = 5
+HIDDEN_DIM = 4
+
+# Make up some training data
+training_data = [(
+    "the wall street journal reported today that apple corporation made money".split(),
+    "B I I I O O O B I O O".split()
+), (
+    "georgia tech is a university in georgia".split(),
+    "B I O O O O B".split()
+)]
+
+word_to_ix = {}
+for sentence, tags in training_data:
+    for word in sentence:
+        if word not in word_to_ix:
+            word_to_ix[word] = len(word_to_ix)
+
+tag_to_ix = {"B": 0, "I": 1, "O": 2, START_TAG: 3, STOP_TAG: 4}
+
+model = BiLSTM_CRF(len(word_to_ix), tag_to_ix, EMBEDDING_DIM, HIDDEN_DIM)
+optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay=1e-4)
+
+# Check predictions before training
+with torch.no_grad():
+    precheck_sent = prepare_sequence(training_data[0][0], word_to_ix)
+    precheck_tags = torch.tensor(
+        [tag_to_ix[t] for t in training_data[0][1]], dtype=torch.long)
+    print(model(precheck_sent))
+
+# Make sure prepare_sequence from earlier in the LSTM section is loaded
+for epoch in range(
+        300):  # again, normally you would NOT do 300 epochs, it is toy data
+    for sentence, tags in training_data:
+        # Step 1. Remember that Pytorch accumulates gradients.
+        # We need to clear them out before each instance
+        model.zero_grad()
+
+        # Step 2. Get our inputs ready for the network, that is,
+        # turn them into Tensors of word indices.
+        sentence_in = prepare_sequence(sentence, word_to_ix)
+        targets = torch.tensor([tag_to_ix[t] for t in tags], dtype=torch.long)
+
+        # Step 3. Run our forward pass.
+        loss = model.neg_log_likelihood(sentence_in, targets)
+
+        # Step 4. Compute the loss, gradients, and update the parameters by
+        # calling optimizer.step()
+        loss.backward()
+        optimizer.step()
+
+# Check predictions after training
+with torch.no_grad():
+    precheck_sent = prepare_sequence(training_data[0][0], word_to_ix)
+    print(model(precheck_sent))
+# We got it!
